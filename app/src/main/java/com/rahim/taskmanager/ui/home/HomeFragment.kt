@@ -54,7 +54,7 @@ class HomeFragment : Fragment() , Adapter.Listener{
         setData()
         binding.recycleTask.adapter = adapter
         binding.btnPlus.setOnClickListener {
-            findNavController().navigate(R.id.taskFragment)
+            findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToTaskFragment())
 
         }
     }

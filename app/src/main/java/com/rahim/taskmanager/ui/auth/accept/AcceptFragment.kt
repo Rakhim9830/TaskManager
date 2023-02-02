@@ -41,7 +41,7 @@ class AcceptFragment : Fragment() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    findNavController().navigate(R.id.navigation_home)
+                    findNavController().navigate(AcceptFragmentDirections.actionAcceptFragmentToNavigationHome())
                     val user = task.result?.user
                 } else {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {

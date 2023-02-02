@@ -1,0 +1,84 @@
+package com.rahim.taskmanager.ui.home
+
+import android.app.AlertDialog
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.rahim.taskmanager.R
+import com.rahim.taskmanager.databinding.FragmentHomeBinding
+import com.rahim.taskmanager.App
+import com.rahim.taskmanager.model.TaskModel
+import com.rahim.taskmanager.ui.task.adapter.Adapter
+
+class HomeFragment : Fragment() , Adapter.Listener{
+    private lateinit var builder: AlertDialog.Builder
+    private var _binding: FragmentHomeBinding? = null
+    private lateinit var adapter: Adapter
+
+    private val binding get() = _binding!!
+    private val task: TaskModel
+        get() {
+            TODO()
+        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        adapter = Adapter(this)
+        builder = AlertDialog.Builder(requireActivity())
+
+
+
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+
+
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+
+        return root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setData()
+        binding.recycleTask.adapter = adapter
+        binding.btnPlus.setOnClickListener {
+            findNavController().navigate(R.id.taskFragment)
+
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onClick(adapter: TaskModel) {
+
+        builder.setTitle("Delete?").setMessage("Are you Sure?").setCancelable(true)
+            .setPositiveButton("Yes") { _, _ ->
+                App.db.taskDao().delete(adapter)
+                setData()
+            }.setNegativeButton("No") { DialogInterface, _ -> DialogInterface.cancel() }
+        builder.create().show()
+        super.onClick(adapter)
+    }
+
+    private fun setData() {
+        val tasks = App.db.taskDao().getAll()
+        adapter.addTasks(tasks)
+    }
+
+
+}

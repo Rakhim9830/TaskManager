@@ -48,6 +48,10 @@
         tools:layout="@layout/fragment_accept">
         <argument android:name="verId"
             app:argType="string"/>
+
+        <action
+            android:id="@+id/action_acceptFragment_to_boarding"
+            app:destination="@id/boarding" />
         <action
             android:id="@+id/action_acceptFragment_to_navigation_home"
             app:destination="@id/navigation_home" />

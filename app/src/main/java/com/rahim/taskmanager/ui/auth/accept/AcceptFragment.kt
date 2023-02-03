@@ -17,7 +17,8 @@ import com.rahim.taskmanager.databinding.FragmentAcceptBinding
 class AcceptFragment : Fragment() {
     private lateinit var binding: FragmentAcceptBinding
     private lateinit var args: AcceptFragmentArgs
-    private var auth = FirebaseAuth.getInstance()
+    private lateinit var auth:FirebaseAuth
+
 
 
     override fun onCreateView(
@@ -25,18 +26,18 @@ class AcceptFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentAcceptBinding.inflate(layoutInflater, container, false)
-        return inflater.inflate(R.layout.fragment_accept, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         args = arguments?.let { AcceptFragmentArgs.fromBundle(it) }!!
+        auth = FirebaseAuth.getInstance()
         binding.btnAccept.setOnClickListener {
-            val credential = PhoneAuthProvider.getCredential(args.verId!!, binding.edCode.text.toString())
+            val credential = PhoneAuthProvider.getCredential(args.verId, binding.edCode.text.toString())
             signInWithPhoneAuthCredential(credential)
         }
     }
-
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->

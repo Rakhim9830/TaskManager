@@ -58,7 +58,9 @@ class SplashFragment : Fragment() {
            }
         }
 
+       else{startFragment()
 
+       }
     }
 
     private fun startFragment(){

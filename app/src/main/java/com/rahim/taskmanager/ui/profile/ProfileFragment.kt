@@ -24,7 +24,6 @@ class ProfileFragment : Fragment() {
     private lateinit var pref: Pref
     private var firebase = Firebase.firestore
 
-
     private val launcher = registerForActivityResult<Intent,ActivityResult>(
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
@@ -34,33 +33,25 @@ class ProfileFragment : Fragment() {
             val photoUri = result.data?.data
             pref.saveImage(photoUri.toString())
             binding.profileImage.loadIMage(photoUri.toString())
-
         }
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-
-
     ): View? {
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         pref = Pref(requireContext())
         binding.profileEd.setText(pref.getName())
         binding.ageId.setText(pref.getAge())
         binding.profileImage.loadIMage(pref.getImage())
-
         binding.btnProfile.setOnClickListener {
             pref.saveName(binding.profileEd.text.toString())
             pref.saveAge(binding.ageId.text.toString())
-
-
         }
         binding.profileImage.setOnClickListener {
             val intent = Intent()
@@ -68,10 +59,8 @@ class ProfileFragment : Fragment() {
             intent.action = Intent.ACTION_GET_CONTENT
             launcher.launch(intent)
         }
-
         binding.btnExit.setOnClickListener{
             FirebaseAuth.getInstance().signOut()
         }
-
     }
 }

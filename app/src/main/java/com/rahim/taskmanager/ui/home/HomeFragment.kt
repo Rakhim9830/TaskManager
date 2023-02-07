@@ -62,10 +62,8 @@ class HomeFragment : Fragment() , Adapter.Listener{
 
         }
     }
-
     private fun getTask(){
   val uid =  FirebaseAuth.getInstance().currentUser?.uid
-
       if (uid !=  null){
           db.collection(uid).get().addOnSuccessListener {
          val data = it.toObjects(TaskModel::class.java)
@@ -77,9 +75,7 @@ class HomeFragment : Fragment() , Adapter.Listener{
       } else{
 
       }
-
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

@@ -53,7 +53,7 @@ class TaskFragment : Fragment() {
 
 
     private fun putTask(taskModel: TaskModel){
-        FirebaseAuth.getInstance().currentUser?.let { db.collection(it.uid).
+        FirebaseAuth.getInstance().currentUser?.uid?.let { db.collection(it).
         add(taskModel).addOnSuccessListener {
             Log.e("ololo", "save: success" )
         }.addOnFailureListener{

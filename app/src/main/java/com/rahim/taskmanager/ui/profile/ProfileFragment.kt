@@ -9,6 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.rahim.taskmanager.R
 import com.rahim.taskmanager.data.Pref
 import com.rahim.taskmanager.databinding.FragmentProfileBinding
@@ -19,6 +22,8 @@ class ProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
     private lateinit var pref: Pref
+    private var firebase = Firebase.firestore
+
 
     private val launcher = registerForActivityResult<Intent,ActivityResult>(
         ActivityResultContracts.StartActivityForResult()
@@ -62,6 +67,10 @@ class ProfileFragment : Fragment() {
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
             launcher.launch(intent)
+        }
+
+        binding.btnExit.setOnClickListener{
+            FirebaseAuth.getInstance().signOut()
         }
 
     }

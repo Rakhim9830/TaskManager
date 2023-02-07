@@ -15,22 +15,14 @@ import com.rahim.taskmanager.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var pref: Pref
-    private  var auth = FirebaseAuth.getInstance()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        pref = Pref(this)
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        if (!pref.isUserSeen())
-            navController.navigate(R.id.boarding)
-        if (auth.currentUser == null){
-            navController.navigate(R.id.authFragment)
-        }
-
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home,
@@ -43,17 +35,15 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
         val bottomNavFragments = arrayListOf(
             R.id.navigation_home,
             R.id.navigation_dashboard,
             R.id.navigation_notifications,
             R.id.navigation_profile,
         )
-
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             navView.isVisible = bottomNavFragments.contains(destination.id)
-            if (destination.id == R.id.boarding) {
+            if (destination.id == R.id.boarding||destination.id == R.id.splashFragment) {
                 supportActionBar?.hide()
 
             } else supportActionBar?.show()

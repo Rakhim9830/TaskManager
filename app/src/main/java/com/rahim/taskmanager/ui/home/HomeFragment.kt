@@ -7,9 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.rahim.taskmanager.R
 import com.rahim.taskmanager.databinding.FragmentHomeBinding
 import com.rahim.taskmanager.App
+import com.rahim.taskmanager.isOnline
 import com.rahim.taskmanager.model.TaskModel
 import com.rahim.taskmanager.ui.task.adapter.Adapter
 
@@ -17,7 +22,7 @@ class HomeFragment : Fragment() , Adapter.Listener{
     private lateinit var builder: AlertDialog.Builder
     private var _binding: FragmentHomeBinding? = null
     private lateinit var adapter: Adapter
-
+  private  var db = Firebase.firestore
     private val binding get() = _binding!!
     private val task: TaskModel
         get() {
@@ -42,16 +47,15 @@ class HomeFragment : Fragment() , Adapter.Listener{
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-
         return root
     }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setData()
+       if (requireContext().isOnline()){
+             getTask()
+        }else{
+           setData()
+        }
         binding.recycleTask.adapter = adapter
         binding.btnPlus.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToTaskFragment())
@@ -59,13 +63,28 @@ class HomeFragment : Fragment() , Adapter.Listener{
         }
     }
 
+    private fun getTask(){
+  val uid =  FirebaseAuth.getInstance().currentUser?.uid
+
+      if (uid !=  null){
+          db.collection(uid).get().addOnSuccessListener {
+         val data = it.toObjects(TaskModel::class.java)
+              adapter.addTasks(data)
+          }.
+          addOnFailureListener{
+
+          }
+      } else{
+
+      }
+
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
     override fun onClick(adapter: TaskModel) {
-
         builder.setTitle("Delete?").setMessage("Are you Sure?").setCancelable(true)
             .setPositiveButton("Yes") { _, _ ->
                 App.db.taskDao().delete(adapter)
@@ -74,7 +93,6 @@ class HomeFragment : Fragment() , Adapter.Listener{
         builder.create().show()
         super.onClick(adapter)
     }
-
     private fun setData() {
         val tasks = App.db.taskDao().getAll()
         adapter.addTasks(tasks)

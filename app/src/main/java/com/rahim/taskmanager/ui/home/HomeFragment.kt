@@ -28,23 +28,16 @@ class HomeFragment : Fragment() , Adapter.Listener{
         get() {
             TODO()
         }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         adapter = Adapter(this)
         builder = AlertDialog.Builder(requireActivity())
-
-
-
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
         return root
@@ -59,26 +52,19 @@ class HomeFragment : Fragment() , Adapter.Listener{
         binding.recycleTask.adapter = adapter
         binding.btnPlus.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToTaskFragment())
-
         }
+        setDataFromFirebase()
     }
     private fun getTask(){
   val uid =  FirebaseAuth.getInstance().currentUser?.uid
-      if (uid !=  null){
+      if (uid !=  null) {
           db.collection(uid).get().addOnSuccessListener {
-         val data = it.toObjects(TaskModel::class.java)
+              val data = it.toObjects(TaskModel::class.java)
               adapter.addTasks(data)
-          }.
-          addOnFailureListener{
+          }.addOnFailureListener {
 
           }
-      } else{
-
-      }
-    }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+       }
     }
     override fun onClick(adapter: TaskModel) {
         builder.setTitle("Delete?").setMessage("Are you Sure?").setCancelable(true)
@@ -93,6 +79,17 @@ class HomeFragment : Fragment() , Adapter.Listener{
         val tasks = App.db.taskDao().getAll()
         adapter.addTasks(tasks)
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+    private fun setDataFromFirebase(){
+        if (requireContext().isOnline()){
+            getTask()
+        }else{
+            setData()
+        }
 
+    }
 
 }

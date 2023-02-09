@@ -9,8 +9,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 import com.rahim.taskmanager.data.Pref
 import com.rahim.taskmanager.databinding.ActivityMainBinding
+import com.rahim.taskmanager.model.TaskModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,9 +32,14 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_notifications,
                 R.id.taskFragment,
                 R.id.navigation_profile,
-
             )
+
         )
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener{
+          taskmodel ->
+
+        }
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         val bottomNavFragments = arrayListOf(

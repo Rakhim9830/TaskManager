@@ -1,5 +1,6 @@
 package com.rahim.taskmanager.ui.task
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +21,11 @@ class TaskFragment : Fragment() {
 
     private lateinit var binding: FragmentTaskBinding
     private val db = Firebase.firestore
+    private var navArgs:TaskFragmentArgs = TODO()
+           get() {
+            TODO()
+        }
+    private  var task: TaskModel? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,12 +37,37 @@ class TaskFragment : Fragment() {
     }
 
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+      arguments?.let { navArgs = TaskFragmentArgs.fromBundle(it)
+          task = navArgs.task
+
+        }
+        if (task != null){
+          binding.edTitle.setText(task?.title)
+          binding.edDesc.setText(task?.title)
+          binding.btnSave.setText("Update")
+        }else{
+            binding.btnSave.setText("Save")
+        }
         binding.btnSave.setOnClickListener {
-            save()
+            if (task!=null){
+                onUpdate()
+            }
+            else{
+                save()
+            }
+
         }
 
+    }
+
+    private fun onUpdate() {
+        task?.title = binding.edTitle.text.toString()
+        task?.title = binding.edDesc.text.toString()
+        task?.let { App.db.taskDao().update(it) }
+         findNavController().navigateUp()
     }
 
     private fun save() {

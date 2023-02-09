@@ -5,15 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.rahim.taskmanager.R
 import com.rahim.taskmanager.databinding.FragmentHomeBinding
 import com.rahim.taskmanager.App
+import com.rahim.taskmanager.R
 import com.rahim.taskmanager.isOnline
 import com.rahim.taskmanager.model.TaskModel
 import com.rahim.taskmanager.ui.task.adapter.Adapter
@@ -24,13 +24,10 @@ class HomeFragment : Fragment() , Adapter.Listener{
     private lateinit var adapter: Adapter
   private  var db = Firebase.firestore
     private val binding get() = _binding!!
-    private val task: TaskModel
-        get() {
-            TODO()
-        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter = Adapter(this)
+        adapter = Adapter(this, this::updateClick)
         builder = AlertDialog.Builder(requireActivity())
     }
     override fun onCreateView(
@@ -39,8 +36,7 @@ class HomeFragment : Fragment() , Adapter.Listener{
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-        return root
+        return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,7 +47,7 @@ class HomeFragment : Fragment() , Adapter.Listener{
         }
         binding.recycleTask.adapter = adapter
         binding.btnPlus.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToTaskFragment())
+            findNavController().navigate(R.id.taskFragment)
         }
         setDataFromFirebase()
     }
@@ -66,6 +62,12 @@ class HomeFragment : Fragment() , Adapter.Listener{
           }
        }
     }
+
+    private fun updateClick(taskModel: TaskModel){
+         findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToTaskFragment(taskModel))
+    }
+
+
     override fun onClick(adapter: TaskModel) {
         builder.setTitle("Delete?").setMessage("Are you Sure?").setCancelable(true)
             .setPositiveButton("Yes") { _, _ ->
